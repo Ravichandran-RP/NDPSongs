@@ -28,7 +28,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         String createNoteTableSql = "CREATE TABLE " + TABLE_SONG + "("
                 + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-                + COLUMN_TITLE + " TEXT ,"+COLUMN_SINGERS+"TEXT ,"+COLUMN_YEAR+"INTEGER ,"
+                + COLUMN_TITLE + " TEXT ,"+COLUMN_SINGERS+" TEXT ,"+COLUMN_YEAR+" INTEGER ,"
                 +COLUMN_STARS+" INTEGER )";
         db.execSQL(createNoteTableSql);
         Log.i("info", "created tables");
@@ -50,7 +50,7 @@ public class DBHelper extends SQLiteOpenHelper {
         db.execSQL("ALTER TABLE " + TABLE_SONG + " ADD COLUMN  module_name TEXT ");
     }
 
-    public long insertSong(String songTitle,String songSingers,Integer year,Integer stars) {
+    public long insertSong(String songTitle,String songSingers,int year,int stars) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(COLUMN_TITLE,songTitle);
@@ -59,7 +59,7 @@ public class DBHelper extends SQLiteOpenHelper {
         values.put(COLUMN_STARS,stars);
         long result = db.insert(TABLE_SONG, null, values);
         if (result == -1){
-            Log.d("DBHelper", "Insert failed");
+            Log.d("DBHelper", "Insert statement failed");
         }
 
         db.close();
@@ -80,9 +80,9 @@ public class DBHelper extends SQLiteOpenHelper {
             do {
                 int id = cursor.getInt(0);
                 String title=cursor.getString(1);
-                String singers=cursor.getString(1);
-                int year = cursor.getInt(1);
-                int stars = cursor.getInt(1);
+                String singers=cursor.getString(2);
+                int year = cursor.getInt(3);
+                int stars = cursor.getInt(4);
                 Song song = new Song(id,title,singers,year,stars);
                 songs.add(song);
             } while (cursor.moveToNext());
@@ -122,13 +122,13 @@ public class DBHelper extends SQLiteOpenHelper {
         return result;
     }
 
-    public ArrayList<Song> getAllNotes(Integer keyword) {
+    public ArrayList<Song> getAllSongs5Star() {
         ArrayList<Song> songs = new ArrayList<Song>();
 
         SQLiteDatabase db = this.getReadableDatabase();
         String[] columns= {COLUMN_ID, COLUMN_TITLE,COLUMN_SINGERS,COLUMN_YEAR,COLUMN_STARS};
         String condition = COLUMN_STARS + "= ?";
-        String[] args = { "%" +  keyword + "%"};
+        String[] args = { "5"};
         Cursor cursor = db.query(TABLE_SONG, columns, condition, args,
                 null, null, null, null);
 
@@ -136,9 +136,9 @@ public class DBHelper extends SQLiteOpenHelper {
             do {
                 int id = cursor.getInt(0);
                 String title=cursor.getString(1);
-                String singers=cursor.getString(1);
-                int year = cursor.getInt(1);
-                int stars = cursor.getInt(1);
+                String singers=cursor.getString(2);
+                int year = cursor.getInt(3);
+                int stars = cursor.getInt(4);
                 Song song = new Song(id,title,singers,year,stars);
                 songs.add(song);
             } while (cursor.moveToNext());

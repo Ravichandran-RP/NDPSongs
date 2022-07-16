@@ -2,6 +2,7 @@ package sg.edu.rp.c346.id20026389.ndpsongs;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -20,6 +21,19 @@ public class MainActivity extends AppCompatActivity {
     RadioButton rating1,rating2,rating3,rating4,rating5;
     Button btnInsert,btnShow;
 
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        etTtile.setText("");
+        etSingers.setText("");
+        etYear.setText("");
+        rating1.setChecked(false);
+        rating2.setChecked(false);
+        rating3.setChecked(false);
+        rating4.setChecked(false);
+        rating5.setChecked(false);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,39 +59,68 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                String songTitle = etTtile.getText().toString();
-                String songSingers = etSingers.getText().toString();
-                int year = Integer.parseInt(etYear.getText().toString());
+
                 int stars;
-                if (rating1.isChecked()){
-                    stars=1;
-                }
-                else if (rating2.isChecked()){
-                    stars=2;
-                }
-                else if (rating3.isChecked()){
-                    stars=3;
-                }
-                else if (rating4.isChecked()){
-                    stars=4;
-                }
-                else if (rating5.isChecked()){
-                    stars=5;
-                }
-                else {
-                    stars=0;
-                }
                 DBHelper dbh = new DBHelper(MainActivity.this);
-                long inserted_id = dbh.insertSong(songTitle,songSingers,year,stars);
-                if (inserted_id != -1) {
+                if (etTtile.getText().toString().trim().length()==0 ||
+                        etSingers.getText().toString().trim().length()==0 ||
+                        etYear.getText().toString().trim().length()==0){
+                    Toast.makeText(MainActivity.this, "Please fill up all the fields",
+                            Toast.LENGTH_LONG).show();
+                }
+                else{
+
+                    String songTitle = etTtile.getText().toString().trim();
+                    String songSingers = etSingers.getText().toString().trim();
+                    int year = Integer.parseInt(etYear.getText().toString().trim());
+                    if (rating1.isChecked()){
+                        stars=1;
+                    }
+                    else if (rating2.isChecked()){
+                        stars=2;
+                    }
+                    else if (rating3.isChecked()){
+                        stars=3;
+                    }
+                    else if (rating4.isChecked()){
+                        stars=4;
+                    }
+                    else if (rating5.isChecked()){
+                        stars=5;
+                    }
+                    else {
+                        stars=0;
+                    }
+                    long inserted_id = dbh.insertSong(songTitle,songSingers,year,stars);
+                    if (inserted_id != -1) {
 //                    al.clear();
 //                    al.addAll(dbh.getAllNotes());
 //                    aa.notifyDataSetChanged();
-                    Toast.makeText(MainActivity.this, "Insert successful",
-                            Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MainActivity.this, "Insert successful",
+                                Toast.LENGTH_SHORT).show();
+                    }
+                    else{
+                        Toast.makeText(MainActivity.this, "Insert failed",
+                                Toast.LENGTH_SHORT).show();
+                    }
                 }
+
+
+
             }
         });
+
+        btnShow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(MainActivity.this,
+                        Showcase.class);
+                startActivity(i);
+
+            }
+        });
+
+
 
 
 
